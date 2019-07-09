@@ -33,10 +33,10 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  console.log('---------------------');
-  console.log(req.params.shortURL);
-  console.log(urlDatabase[req.params.ashortURL]);
-  console.log('----------------------')
+  // console.log('---------------------');
+  // console.log(req.params.shortURL);
+  // console.log(urlDatabase[req.params.ashortURL]);
+  // console.log('----------------------')
 
   let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};// What goes here?
   //let templateVars = { shortURL: req.params.shortURL, longURL: "http://www.lighthouselabs.ca"};// What goes here?
