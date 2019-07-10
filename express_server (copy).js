@@ -51,14 +51,8 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   let templateVars = { 
-    username: users[req.cookies["username"]],
+    username: req.cookies["username"],
     urls: urlDatabase };
-
-    // console.log('IM IN YOU')
-    // console.log(users[req.cookies["username"]])
-    // console.log(users)
-    // console.log(req.cookies["username"])
-
   res.render("urls_index", templateVars);
 });
 
@@ -71,7 +65,7 @@ app.post('/login/loggingin', (req, res) => {
   const key = checkExistence(users, req.body.chosenUsername);
   if (key) {
     if (users[key]["password"] === req.body.chosenPassword) {
-      res.cookie("username", key)
+      res.cookie("username", req.body.chosenUsername)
       res.redirect('/urls/')
     } else {
       res.status(403).send("Wrong password")
@@ -95,20 +89,20 @@ app.post("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = {username: users[req.cookies["username"]]}
+  let templateVars = {username: req.cookies["username"]}
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
-    username: users[req.cookies["username"]],
+    username: req.cookies["username"],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL]};
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  let templateVars = {username: users[req.cookies["username"]], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};// What goes here?
+  let templateVars = {username: req.cookies["username"], shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]};// What goes here?
   res.render("urls_show", templateVars);
 });
 
@@ -129,11 +123,11 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get('/registration', (req, res) => {
-  res.render("urls_registration",{username: users[req.cookies.username]})
+  res.render("urls_registration",{username: req.cookies.username})
 });
 
 app.post('/registration', (req, res) => {
-  res.render("urls_registration",{username: users[req.cookies.username]})
+  res.render("urls_registration",{username: req.cookies.username})
 })
 
 app.post('/registration/registering', (req,res)=>{
@@ -148,7 +142,7 @@ app.post('/registration/registering', (req,res)=>{
       password: req.body.chosenPassword
     };
     users[newUser.id] = newUser;
-    res.cookie("username", newUser.id)
+    res.cookie("username", newUser.email)
     res.redirect('/urls')
   }
 })
