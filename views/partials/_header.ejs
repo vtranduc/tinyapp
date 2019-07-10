@@ -8,6 +8,24 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+
+        <% if (username !== undefined) { %>
+
+          <form method = "POST" action = "/logout" style = "position: absolute; right: 0">
+            Welcome! You piece of... <%= username %>!
+            <input type = "submit" class="btn btn-primary" style="background-color: green" value = "Logout">
+          </form>
+
+        <% } else { %>
+
+          <form method = "POST" action = "/login" style = "position: absolute; right: 0">
+            <input placeholder = "username" name="chosenUsername"></input>  
+            <input type = "submit" class="btn btn-primary" style="background-color: green" value = "Login">
+          </form>
+
+        <% } %>
+        
+
       </div>
     </div>
   </nav>
