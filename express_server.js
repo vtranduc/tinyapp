@@ -45,8 +45,11 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (req, res) => {
-  //res.send("Hello!");
-  res.redirect("/urls/");
+  if (req.session.userID) {
+    res.redirect("/urls/");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get("/urls.json", (req, res) => {
@@ -59,15 +62,22 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = {
-    username: users[req.session.userID],
-    urls: urlsForUser(urlDatabase, req.session.userID) };
-
-  res.render("urls_index", templateVars);
+  if (req.session.userID) {
+    let templateVars = {
+      username: users[req.session.userID],
+      urls: urlsForUser(urlDatabase, req.session.userID) };
+    res.render("urls_index", templateVars);
+  } else {
+    res.status(403).send("You need to be logged in to use this feature")
+  }
 });
 
 app.get('/login', (req, res) => {
-  res.render('urls_login');
+  if (req.session.userID) {
+    res.redirect('/urls')
+  } else {
+    res.render('urls_login');
+  }
 });
 
 app.post('/login/loggingin', (req, res) => {
@@ -86,7 +96,7 @@ app.post('/login/loggingin', (req, res) => {
 
 app.post("/logout", (req, res) => {
   req.session.userID = null;
-  res.redirect('/urls/');
+  res.redirect('/login');
 });
 
 app.post("/urls", (req, res) => {
@@ -128,8 +138,16 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls/');
+  if (req.session.userID) {
+    if (urlDatabase[req.params.shortURL].userID === req.session.userID) {
+      delete urlDatabase[req.params.shortURL];
+      res.redirect('/urls/');
+    } else {
+      res.status(403).send("You are not authorized to perform this action")
+    }
+  } else {
+    res.status(403).send("You must be logged in to perform this action")
+  }
 });
 
 app.post('/urls/:shortURL/add', (req, res) => {
@@ -138,14 +156,14 @@ app.post('/urls/:shortURL/add', (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL].longURL) {
+  if (urlDatabase[req.params.shortURL]) {
     res.redirect(urlDatabase[req.params.shortURL].longURL);
   } else {
     res.status(403).send("url does not exist");
   }
 });
 
-app.get('/registration', (req, res) => {
+app.get('/register', (req, res) => {
   if (!req.session.userID) {
     res.render("urls_registration",{username: users[req.session.userID]});
   } else {
@@ -154,10 +172,11 @@ app.get('/registration', (req, res) => {
 });
 
 app.post('/registration', (req, res) => {
-  res.render("urls_registration",{username: users[req.session.userID]});
+  // res.render("urls_registration",{username: users[req.session.userID]});
+  res.redirect("/register");
 });
 
-app.post('/registration/registering', (req,res)=>{
+app.post('/register', (req,res)=>{
   if (req.body.chosenPassword === "" || req.body.chosenUsername === "") {
     res.status(400).send("username and password must not be empty");
   } else if (checkExistence(users,req.body.chosenUsername)) {
