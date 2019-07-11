@@ -5,22 +5,19 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav mr-auto">
+      <div class="navbar-nav mr-auto" style="position: relative; width: 100%">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-
         <% if (username) {%>
-
           <form method = "POST" action = "/logout" style = "position: absolute; right: 0">
-            Welcome! You piece of... <%= username.email %>!
+            Welcome! You are logged in as <%= username.email %>!
             <input type = "submit" class="btn btn-primary" style="background-color: green" value = "Logout">
           </form>
-
         <% } else { %>
-
-
+          <div style="position: absolute; right: 0">
           <a href="/login"><input type = "submit" class="btn btn-primary" style="background-color: green" value = "Login"></a>
           <a href="/registration"><input type="submit" class="btn btn-primary" style="background-color: green" value="Register"></a>
+          </div>
         <% } %>
       </div>
     </div>
