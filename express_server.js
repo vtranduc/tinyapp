@@ -99,16 +99,27 @@ app.post("/logout", (req, res) => {
   res.redirect('/login');
 });
 
+//====================================================
+
 app.post("/urls", (req, res) => {
-  const longURL = req.body.longURL;
-  const shortURL = generateRandomString();
-  urlsForUser(urlDatabase, req.session.userID)[shortURL] = longURL;
-  urlDatabase[shortURL] = {
-    longURL: longURL,
-    userID: req.session.userID
-  };
-  res.redirect('/urls/' + shortURL);
+
+  if (req.session.userID) {
+    const longURL = req.body.longURL;
+    const shortURL = generateRandomString();
+    //urlsForUser(urlDatabase, req.session.userID)[shortURL] = longURL;
+    urlDatabase[shortURL] = {
+      longURL: longURL,
+      userID: req.session.userID
+    };
+    res.redirect('/urls/' + shortURL);
+  } else {
+    res.status(403).send("You are no logged in");
+  }
 });
+
+
+//====================================================
+
 
 app.get("/urls/new", (req, res) => {
   if (req.session.userID) {
@@ -150,10 +161,22 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
 });
 
+//============================================================
+
 app.post('/urls/:shortURL/add', (req, res) => {
-  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
-  res.redirect('/urls/');
+  if (req.session.userID) {
+    if (req.session.userID === urlDatabase[req.params.shortURL].userID) {
+      urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+      res.redirect('/urls/');
+    } else {
+      res.status(403).send("You are not authorized to edit this link");
+    }
+  } else {
+    res.status(403).send("You must be logged in");
+  }
 });
+
+//============================================================
 
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
