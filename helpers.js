@@ -8,7 +8,7 @@ const checkExistence = function(users, email) {
 };
 
 const urlsForUser = function(urlDatabase, code) {
-  let output = {}
+  let output = {};
   for (let key in urlDatabase) {
     if (urlDatabase[key].userID === code) {
       output[key] = urlDatabase[key].longURL;

@@ -31,7 +31,6 @@ const users = {
   }
 };
 
-
 const urlDatabase = {
   b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
@@ -68,13 +67,13 @@ app.get("/urls", (req, res) => {
       urls: urlsForUser(urlDatabase, req.session.userID) };
     res.render("urls_index", templateVars);
   } else {
-    res.status(403).send("You need to be logged in to use this feature")
+    res.status(403).send("You need to be logged in to use this feature");
   }
 });
 
 app.get('/login', (req, res) => {
   if (req.session.userID) {
-    res.redirect('/urls')
+    res.redirect('/urls');
   } else {
     res.render('urls_login');
   }
@@ -99,14 +98,11 @@ app.post("/logout", (req, res) => {
   res.redirect('/login');
 });
 
-//====================================================
-
 app.post("/urls", (req, res) => {
 
   if (req.session.userID) {
     const longURL = req.body.longURL;
     const shortURL = generateRandomString();
-    //urlsForUser(urlDatabase, req.session.userID)[shortURL] = longURL;
     urlDatabase[shortURL] = {
       longURL: longURL,
       userID: req.session.userID
@@ -116,10 +112,6 @@ app.post("/urls", (req, res) => {
     res.status(403).send("You are no logged in");
   }
 });
-
-
-//====================================================
-
 
 app.get("/urls/new", (req, res) => {
   if (req.session.userID) {
@@ -154,14 +146,12 @@ app.post('/urls/:shortURL/delete', (req, res) => {
       delete urlDatabase[req.params.shortURL];
       res.redirect('/urls/');
     } else {
-      res.status(403).send("You are not authorized to perform this action")
+      res.status(403).send("You are not authorized to perform this action");
     }
   } else {
-    res.status(403).send("You must be logged in to perform this action")
+    res.status(403).send("You must be logged in to perform this action");
   }
 });
-
-//============================================================
 
 app.post('/urls/:shortURL/add', (req, res) => {
   if (req.session.userID) {
@@ -175,8 +165,6 @@ app.post('/urls/:shortURL/add', (req, res) => {
     res.status(403).send("You must be logged in");
   }
 });
-
-//============================================================
 
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
@@ -195,7 +183,6 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/registration', (req, res) => {
-  // res.render("urls_registration",{username: users[req.session.userID]});
   res.redirect("/register");
 });
 
